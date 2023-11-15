@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ToDo list</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        @import url("https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800,900&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  background-image: url(Media/Bubble.svg);
+  color: #0c0b0b;
+  background-size: cover;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+#theme {
+  position: absolute;
+  top: 46px;
+  right: 100px;
+  align-items: center;
+  text-decoration: none;
+  padding: 6px 15px;
+  color: #fff;
+  border-radius: 20px;
+}
+
+#github {
+  position: absolute;
+  top: 40px;
+  right: 40px;
+}
+
+#github:hover {
+  transform: rotate(360deg);
+  transition: all 0.5s ease-in-out 0s;
+}
+
+#theme:hover {
+  background: #fff;
+  color: #111;
+  transition: 0.8s;
+}
+
+h1 {
+  color: rgb(247, 247, 247);
+  font-size: 10rem;
+  text-align: center;
+}
+
+form {
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  max-width: 100%;
+  width: 400px;
+}
+
+.input {
+  border: none;
+  font-size: 2rem;
+  color: #444;
+  padding: 1rem 4.5rem;
+  display: block;
+  width: 100%;
+  cursor: pointer;
+}
+
+.input::placeholder {
+  color: #c4c4c4;
+}
+
+.todos {
+  background-color: #fff;
+  list-style-type: none;
+}
+
+.todos li {
+  border-top: 1px solid #6effec;
+  font-size: 1.5rem;
+  padding: 1rem 2rem;
+}
+
+.todos li.completed {
+  color: #b5b5b5;
+  text-decoration: line-through;
+}
+
+small {
+  color: #fff;
+  text-align: center;
+  margin-top: 1rem;
+}
+
+h1,
+form,
+small {
+  display: inline-block;
+  animation: fadeIn linear 1s;
+  -webkit-animation: fadeIn linear 1s;
+  -moz-animation: fadeIn linear 1s;
+  -o-animation: fadeIn linear 1s;
+  -ms-animation: fadeIn linear 1s;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@-moz-keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@-webkit-keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@-o-keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@-ms-keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* When the browser is max 600px or below */
+@media screen and (max-width: 600px) {
+  body {
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+  h1 {
+    font-size: 7rem;
+  }
+  form {
+    width: 360px;
+  }
+  .input::placeholder {
+    font-size: 1.5rem;
+    text-align: center;
+  }
+}
+
+/* When the browser is max 320px or below */
+@media screen and (max-width: 320px) {
+  h1 {
+    font-size: 5rem;
+  }
+  form {
+    width: 300px;
+  }
+  .input::placeholder {
+    font-size: 1.3rem;
+    text-align: center;
+  }
+}
+    </style>
+</head>
+<body>
+    <a href="#" id="theme" onclick="myFunction()"></a>
+    <a href="https://github.com/AyushDongarwar" target="_blank" id="github"><img src="https://tse3.mm.bing.net/th?id=OIP.C6KqIOLCzoDpottbBxmEZAHaGK&pid=Api&P=0&h=220" alt="github" height="50px" width="auto"></a>
+    <h1>To_Do_List</h1>
+    <form id="form">
+        <input 
+         type="text" 
+         id="input"
+         class="input" 
+         placeholder="Enter your todo"
+         autocomplete="off"
+         onsubmit="addEventListener"
+        >
+        <ul class="todos" id="todos"></ul>
+    </form>
+    <small>Left click to toggle complete. <br> Right click to delete the todo.</small>
+</body>
+<script>function myFunction(){
+    var image = document.getElementById("theme");
+    if(document.body.style.backgroundImage.match("Media/Box.svg")){
+        document.body.style.backgroundImage = "url(Media/Bubble.svg)";  
+    }
+    else{
+        document.body.style.backgroundImage = "url(Media/Box.svg)";
+    }
+}
+
+const form = document.getElementById("form");
+const input = document.getElementById("input");
+const todosUL = document.getElementById("todos");
+
+const todos = JSON.parse(localStorage.getItem('todos'));
+
+if(todos){
+    todos.forEach(todo => {
+        addTodo(todo)
+    });
+}
+
+form.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    addTodo();
+});
+
+function addTodo(todo){
+    let todoText = input.value;
+
+    if(todo){
+        todoText = todoText;
+    }
+
+    if (todoText) 
+    {
+        const todoE1 = document.createElement("li");
+
+        if(todo && todo.completed){
+            todoE1.classList.add("completed");
+        }
+        
+        todoE1.innerText = todoText;
+
+        todoE1.addEventListener('click', () =>{
+            todoE1.classList.toggle('completed');
+            updateLS();
+        });
+
+        todoE1.addEventListener('contextmenu',(e) =>{
+            e.preventDefault();
+            todoE1.remove();
+            updateLS();
+        });
+
+        todosUL.appendChild(todoE1);
+        input.value= "";
+        updateLS();
+    }
+}
+
+function updateLS() {
+    const todosE1 = document.querySelectorAll("li");
+
+    const todos= [];
+
+    todosE1.forEach(todosE1 => {
+        todos.push({
+            text: todosE1.innerText,
+            completed: todosE1.classList.contains("completed"),
+        });
+    });
+
+    localStorage.setItem("todos", JSON.stringify(todos));
+}</script>
+</html>
